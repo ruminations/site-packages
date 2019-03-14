@@ -5,6 +5,10 @@
 from distutils.core import setup
 from distutils.extension import Extension
 from Cython.Distutils import build_ext
+## TODO:
+# 0) as always, writing a doctest suite.
+# 1) implement new tests for mutables
+# 2) re-verify test correctness
 
 ext_modules=[Extension("space", ["space.pyx"], libraries =["m"])]
 setup(name        = "space_cython",\
@@ -15,7 +19,7 @@ if __name__ == '__main__':
   except ImportError:
     raise ImportError,"Extension failed to compile - omitting unit tests"
   print "version:",space.__version__
-  from space import V,M,SqM
+  from space import V,U,M,SqM
   print "===Beginning module space.pyx test suite==="
   from time import time
   from math import pi
@@ -56,7 +60,19 @@ if __name__ == '__main__':
   except: print 'Caught:',ex()[1:2]
   try: a|c
   except: print 'Caught:',ex()[1:2]
-  print "===Vector tests complete==="
+  print "\n'U' mutability and classmethod U.zero test:"
+  v=V.zero(10)
+  print repr(v),'\nabs ==',abs(v)
+  try: v[5]=1
+  except: print 'Caught:',ex()[1:2]
+  u=U.zero(10)
+  print repr(u),'\nabs ==',abs(u)
+  u[5]=-1; u[6:9]=range(1,4)
+  print repr(u),'\nabs ==',abs(u)
+  u[5]=-1; u[::2]=list(reversed(range(1,6)))
+  print repr(u),'\nabs ==',abs(u)
+  for i in range(5): print repr(U.basis(i,5))
+  print "===Vector tests complete===\n"
   g=M(V(1, 2, 3, 4), V([4, 3, 2, 1]))
   h=M([V(-1, -2, -3, -4), V([-4, -3, -2, -1])])
   d=M(a,b,-a,-b)
